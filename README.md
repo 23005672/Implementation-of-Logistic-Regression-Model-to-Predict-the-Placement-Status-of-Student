@@ -24,62 +24,52 @@ Program to implement the the Logistic Regression Model to Predict the Placement 
 Developed by: RIYA P L
 RegisterNumber: 212223240141
 
-import numpy as np
-from sklearn.datasets import fetch_california_housing
-from sklearn.linear_model import SGDRegressor
-from sklearn.multioutput import MultiOutputRegressor
+import pandas as pd
+data =pd.read_csv("Placement_Data.csv")
+data.head()
+data1=data.copy()
+data1=data1.drop(["sl_no","salary"],axis=1)
+data1.head()
+data1.isnull()
+data1.duplicated().sum()
+from sklearn.preprocessing import LabelEncoder
+le=LabelEncoder()
+data1["gender"]=le.fit_transform(data1["gender"])
+data1["ssc_b"]=le.fit_transform(data1["ssc_b"])
+data1["hsc_b"]=le.fit_transform(data1["hsc_b"])
+data1["hsc_s"]=le.fit_transform(data1["hsc_s"])
+data1["degree_t"]=le.fit_transform(data1["degree_t"])
+data1["workex"]=le.fit_transform(data1["workex"])
+data1["specialisation"]=le.fit_transform(data1["specialisation"])
+data1["status"]=le.fit_transform(data1["status"])
+data1
+x=data1.iloc[:,:-1]
+x
+y=data1["status"]
+y
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler
-
-#load the california housing dataset
-data=fetch_california_housing()
-
-#use the first 3 feature as inputs
-X=data.data[:,:3] #features: 'MedInc' , 'HouseAge' , 'AveRooms'
-
-#use 'MedHouseVal' and 'AveOccup' as output variables
-Y=np.column_stack((data.target, data.data[:,6])) #targets: 'MedHouseVal' , 'AveOccup'
-
-#split the data into training and testing sets 
-X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size=0.2, random_state=42)
-
-#scale the features and target variables
-scaler_X = StandardScaler()
-scaler_Y = StandardScaler()
-
-X_train = scaler_X.fit_transform(X_train)
-X_test = scaler_X.transform(X_test)
-Y_train = scaler_Y.fit_transform(Y_train)
-Y_test = scaler_Y.transform(Y_test)
-
-#initialize the SGDRegressor
-sgd = SGDRegressor(max_iter=1000, tol=1e-3)
-
-#use multioutputregressor to handle multiple output variables
-multi_output_sgd = MultiOutputRegressor(sgd)
-
-#train the model
-multi_output_sgd.fit(X_train,Y_train)
-
-#predict on the test data
-Y_pred = multi_output_sgd.predict(X_test)
-
-#inverse transform the predictions to get them back to the original scale
-Y_pred = scaler_Y.inverse_transform(Y_pred)
-Y_test = scaler_Y.inverse_transform(Y_test)
-
-#evaluate the model using mean squared error
-mse = mean_squared_error(Y_test, Y_pred)
-print("Mean Squared Error:", mse)
-
-#optionally, print some predictions
-print("\nPredictions:\n",Y_pred[:5]) #print first 5 predictions 
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size = 0.2, random_state = 0)
+from sklearn.linear_model import LogisticRegression
+lr =LogisticRegression(solver ="liblinear")
+lr.fit(x_train,y_train)
+ypred=lr.predict(x_test)
+ypred
+from sklearn.metrics import accuracy_score, classification_report
+accuracy= accuracy_score(y_test, ypred)
+accuracy
+classification_report1= classification_report(y_test, ypred)
+print(classification_report1)
+lr.predict([[1,80,1,90,1,1,90,1,0,85,1,85]])
 */
 ```
 
 ## Output:
-![Screenshot 2024-09-02 113236](https://github.com/user-attachments/assets/a0fccd0f-78c2-4386-a23b-10c2658a848c)
+
+![image](https://github.com/user-attachments/assets/0b61ac5e-f296-48f8-b041-a37960c530e7)
+
+![image](https://github.com/user-attachments/assets/f67e186d-bc26-4d3e-85de-85715f7ca0a5)
+
+![image](https://github.com/user-attachments/assets/ab47b304-9703-4fe1-a013-829012a800fb)
 
 ## Result:
 Thus the program to implement the the Logistic Regression Model to Predict the Placement Status of Student is written and verified using python programming.
